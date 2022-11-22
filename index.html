@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@900&display=swap');
+
+body{
+    background-color: rgb(255, 238, 0);
+}
+
+.elements{
+    margin-top: 27vh;
+    text-align: center;
+}
+
+button{
+    margin: 1vh;
+    width: 150px;
+    height: 50px;
+    border-radius: 20px;
+    border-width: 3px;
+    background-color: white;
+    font-weight: bold;
+    box-shadow: 5px 5px 10px rgb(161, 149, 11);
+    cursor: pointer;
+}
+
+.question {
+    animation-name: fadein;
+    animation-duration: 2s;
+    text-transform: uppercase;
+    margin-left: 50px;
+    margin-right: 50px;
+    font-family: 'Work Sans', sans-serif;
+}
+
+.stats{
+    visibility:hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+}
+
+.stats-percentage{
+    width: 50px;
+    background-color: black;
+    color: white;
+    font-size: 23px;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats-text{
+    width: 200px;
+    background-color: white;
+    color: black;
+    border-color: black;
+    border-width: 3px;
+    border-style: solid;
+    padding: 7px;
+}
+
+.credits {
+    position:absolute;
+    right: 0;
+    bottom:0;
+    margin: 2rem;
+}
+
+.credits-text{
+    font-size: 0.75rem;
+    background-color: rgb(255, 255, 255);
+    border-style: solid;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+    border-radius: 3em;
+    font-family: 'Work Sans', sans-serif;
+    box-shadow: 5px 5px 10px rgb(161, 149, 11);
+    cursor: pointer;
+    border-width: 0.2em;
+}
+
+a, a:hover, a:focus, a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+@keyframes fadein {
+    from {color: rgba(0, 0, 0, 0) }
+    to {color: rgb(0, 0, 0)}
+}
+
+@media(hover: hover) {
+    button:hover, .credits-text:hover{
+        background-color: rgb(224, 224, 224);
+        box-shadow: 2.5px 2.5px 10px rgb(161, 149, 11);
+    }
+}
+
+@media (max-width: 1000px) {
+    .credits{
+        visibility: hidden;
+    }
+}
+
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>YES or NO</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="text/javascript" src="./script.js"></script>
+    <link rel="icon" href="assets/question.png" />
+    
+    <!-- Meta Tags-->
+    <meta name="og:title"      property="og:title" content="Yes or No? What's your choice?">
+    <meta name='twitter:title' content="Yes or No? What's your choice?">
+    
+    <meta name="description" content="Yes or No Decision Polls. Know what the world is thinking. Popular social opinion and polls forum.">
+    <meta property='og:description'  content='Endless Yes or No Questions updated with answers from people. Know what everyone is thinking.'>
+    <meta name='twitter:description' content="Endless Yes or No Questions updated with answers from people. Haven't you cast your vote yet?">
+
+    <meta property="og:image"  content="https://raw.githubusercontent.com/thenithinbalaji/YES-or-NO/main/assets/yesno.png">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/thenithinbalaji/YES-or-NO/main/assets/yesno.png">
+
+    <meta property="og:type" content="website" />
+
+</head>
+<body>
+
+    <div class = "stats" id = "stats">
+        
+        <div class = "stats-percentage" id = "stats-percentage">00 %</div>
+        <div class = "stats-text" id = "stats-text" >answered YES to<br>previous question</div>
+
+    </div>
+
+    <div class = "elements">
+        
+        <h1 class = "question" id = "question">Are you ready!</h1>
+    
+        <button id = "buttonyes" onclick = "next(this)">YES</button><br>
+        <button id = "buttonno"  onclick = "next(this)">NO</button>
+    
+    </div>
+
+    <div class = "credits">
+        <a href = "https://github.com/thenithinbalaji/YES-or-NO" target = "_blank">
+            <div class = "credits-text">
+                <p>WEBSITE BY THE NITHIN BALAJI</p>
+            </div>
+        </a>
+    </div>
+    <script>
+      var cachelist = []
+var previndex = -1
+var data 
+var ans 
+
+function next(clicked){
+    //put random qn in question h1 element and set stats
+    randomqn(clicked)
+
+    //play press audio
+    const audio = new Audio('assets/press.mp3');
+    audio.play();
+
+    //restart animations
+    question = document.getElementById("question")
+    question.style.animation = 'none';
+    question.offsetHeight;
+    question.style.animation = null; 
+
+}
+
+async function randomqn(clicked){
+
+  //change this in production
+  if(previndex == -1){
+
+    const response = await fetch("https://raw.githubusercontent.com/thenithinbalaji/YES-or-NO/main/assets/questions.json")
+    const response2 = await fetch("https://raw.githubusercontent.com/thenithinbalaji/YES-or-NO/main/assets/answers.json")
+    // const response = await fetch("http://192.168.0.111:5500//assets/questions.json")
+    // const response2 = await fetch("http://192.168.0.111:5500//assets/answers.json")
+
+    data = await response.json()
+    ans = await response2.json()
+  }
+
+  qnno = Math.floor(Math.random() * (Object.keys(data).length))
+  while(cachelist.includes(qnno)){
+    qnno = Math.floor(Math.random() * (Object.keys(data).length))
+  }
+
+  document.getElementById("question").innerHTML = data[qnno];
+  cachelist.push(qnno);
+
+  //changing STATS
+  if(previndex != -1){
+
+    document.getElementById("stats-text").innerHTML = 
+    "answered " + clicked.id.slice(6).toUpperCase() + " to<br>" + data[previndex]
+
+    if(clicked.id == "buttonyes")
+    percent = ans[previndex]
+
+    else
+    percent = 100 - ans[previndex]
+    
+    document.getElementById("stats-percentage").innerHTML = percent.toString() + "%"
+    document.getElementById("stats").style.visibility = "visible";
+  }
+    
+  previndex = qnno;
+
+  // repeat qns endlessly
+  if(cachelist.length == Object.keys(data).length){
+    cachelist = []
+  }
+}
+
+
+    </script>
+</body>
+</html>
